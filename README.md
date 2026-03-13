@@ -93,14 +93,14 @@ class Book:
         weight = round(self._pages * 0.01, 2)
         return weight
 
-    def str(self):
+    def __str__(self):
         status = "Available" if self._is_available else "Unavailable"
         return f"'{self._title}' | {self._author} | {self._pages} pages | ${self._price:.2f} | Status: {status}"
 
-    def repr(self):
+    def __repr__(self):
         return f"Book(title='{self._title}', author='{self._author}', price={self._price}, pages={self._pages})"
 
-    def eq(self, other):
+    def __eq__(self, other):
         if not isinstance(other, Book):
             return False
         return self._title == other._title and self._author == other._author
@@ -191,5 +191,5 @@ if __name__ == "__main__":
     run_demo()
 ```
 
-![alt text](/images/lab01/Screenshot%202026-02-27%20140047.png)
-![alt text](/images/lab01/Screenshot%202026-02-27%20140145.png)
+![alt text](/images/lab01/Screenshot%202026-03-13%20131005.png)
+![alt text](/images/lab01/Screenshot%202026-03-13%20131040.png)
