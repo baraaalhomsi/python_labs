@@ -1,195 +1,113 @@
 # Paython_Labs
 
-## lab01 (Вариант 2, Задача на 5)
+## lab01: class Book (Вариант 2, Задача на 5)
 
-### model.py (the basic kod)
+## Objective
+- Learn how to declare user-defined classes in Python
+- Understand encapsulation using private fields
+- Implement properties using @property
+- Override magic methods (str, repr, eq)
+- Understand the difference between class attributes and instance attributes
 
+### Main Idea
+Create a book class that:
+
+✓ Monitors data correctness (validation)
+
+✓ Prevents invalid operations (cannot apply discount to unavailable book, cannot borrow unavailable book)
+
+✓ Provides a user-friendly interface through properties (@property)
+
+✓ Tracks book state (available/unavailable)
+
+---
+
+## Implemented Class
+
+### Book
 ```python
 class Book:
+    # Class Attributes
     total_books = 0
-
-    def __init__(self, title, author, price, pages):
-        self._title = self._validate_title(title)
-        self._author = self._validate_author(author)
-        self._price = self._validate_price(price)
-        self._pages = self._validate_pages(pages)
-        self._is_available = True
-        Book.total_books += 1
-
-    def _validate_title(self, value):
-        if not value or not isinstance(value, str) or value.strip() == "":
-            raise ValueError("Title cannot be empty and must be a string.")
-        return value.strip()
-
-    def _validate_author(self, value):
-        if not value or not isinstance(value, str) or value.strip() == "":
-            raise ValueError("Author name cannot be empty.")
-        return value.strip()
-
-    def _validate_price(self, value):
-        if not isinstance(value, (int, float)):
-            raise TypeError("Price must be a number.")
-        if value <= 0:
-            raise ValueError("Price must be greater than zero.")
-        return float(value)
-
-    def _validate_pages(self, value: int) -> int:
-        if not isinstance(value, int):
-            raise TypeError("Pages must be an integer.")
-        if value <= 0:
-            raise ValueError("Pages must be greater than zero.")
-        return value
-
-    @property
-    def title(self):
-        return self._title
-
-    @property
-    def author(self):
-        return self._author
-
-    @property
-    def price(self):
-        return self._price
-
-    @property
-    def pages(self):
-        return self._pages
-
-    @property
-    def is_available(self):
-        return self._is_available
-
-    @price.setter
-    def price(self, new_price):
-        self._price = self._validate_price(new_price)
-
-    @is_available.setter
-    def is_available(self, status: bool):
-        if not isinstance(status, bool):
-            raise TypeError("Status must be True or False.")
-        self._is_available = status
-
-    def borrow(self):
-        if not self._is_available:
-            raise Exception("Cannot borrow the book because it is currently unavailable.")
-        self._is_available = False
-
-    def return_book(self):
-        self._is_available = True
-
-    def apply_discount(self, discount_percent: float) -> float:
-        if not self._is_available:
-            raise Exception("Cannot apply discount to an unavailable book.")
-        if not 0 < discount_percent <= 100:
-            raise ValueError("Discount percent must be between 1 and 100.")
-        discount_amount = self._price * (discount_percent / 100)
-        self._price = round(self._price - discount_amount, 2)
-        return self._price
-
-    def get_shipping_weight(self) -> float:
-        if self._pages <= 0:
-            return 0.0
-        weight = round(self._pages * 0.01, 2)
-        return weight
-
-    def __str__(self):
-        status = "Available" if self._is_available else "Unavailable"
-        return f"'{self._title}' | {self._author} | {self._pages} pages | ${self._price:.2f} | Status: {status}"
-
-    def __repr__(self):
-        return f"Book(title='{self._title}', author='{self._author}', price={self._price}, pages={self._pages})"
-
-    def __eq__(self, other):
-        if not isinstance(other, Book):
-            return False
-        return self._title == other._title and self._author == other._author
 ```
+The main class representing a book in a library. Contains all the logic for handling books.
 
-### demo.py (printing/directing)
+### Class Attributes:
+- total_books — counter for tracking total number of books created
 
-```python
-from model import Book
+### Private Fields (Instance Attributes):
+- _title - book title
+- _author - book author
+- _price - book price
+- _pages - number of pages
+- _is_available — availability status (available/unavailable)
 
-def run_demo():
-    print("=" * 60)
-    print("Python OOP Lab 1: Book Class".center(60))
-    print("=" * 60)
+### Properties:
 
-    print("\n[1] Creating valid objects:")
-    book1 = Book("Rich Dad Poor Dad", "Robert Kiyosaki", 25.50, 300)
-    book2 = Book("The 7 Habits of Highly Effective People", "Stephen Covey", 30.00, 420)
-    print(book1)
-    print(book2)
+| Property | Getter | Setter | Description |
+|----------|--------|--------|-------------|
+| title | ✅ | ❌ | Book title (read-only) |
+| author | ✅ | ❌ | Book author (read-only) |
+| price | ✅ | ✅ | Book price (read/write with validation) |
+| pages | ✅ | ❌ | Number of pages (read-only) |
+| is_available | ✅ | ✅ | Availability status (read/write) |
 
-    print("\n[2] Official representation (repr):")
-    print(repr(book1))
-    print(repr(book2))
+### Magic Methods:
+- __str__ — for print function (user-friendly description)
+- __repr__ — for developers (detailed object representaeq
+- __eq__ — for comparing books based on title and author
 
-    print("\n[3] Comparing objects:")
-    book3 = Book("Rich Dad Poor Dad", "Robert Kiyosaki", 20.00, 200)
-    print(f"book1 == book3? {book1 == book3}")
+### Business Methods:
+- apply_discount(discount_percent) - apply discount to book price
+- get_shipping_weight() - calculate book shipping weight
+- borrow() - borrow the book (changes status to unavailable)
+- return_book() - return the book (changes status to available)
 
-    print("\n[4] Accessing properties:")
-    print(f"First book title: {book1.title}")
-    print(f"Second book author: {book2.author}")
+---
 
-    print("\n[5] Modifying price using setter:")
-    book1.price = 29.99
-    print(f"New price: ${book1.price}")
-    try:
-        book1.price = -10
-    except ValueError as e:
-        print(e)
+## Demonstration
 
-    print("\n[6] Class attribute (total_books):")
-    print(f"Total books created (via class): {Book.total_books}")
-    print(f"Total books created (via object): {book1.total_books}")
+### 1. CREATING BOOKS
+![alt text](/images/lab01/Screenshot%202026-03-14%20180702.png)
 
-    print("\n[7] Object state management:")
-    print(f"book1 availability before borrowing: {book1.is_available}")
-    book1.borrow()
-    print(f"book1 availability after borrowing: {book1.is_available}")
-    try:
-        book1.borrow()
-    except Exception as e:
-        print(e)
-    book1.return_book()
-    print(f"book1 availability after return: {book1.is_available}")
+Shows that each book is created correctly, and the total_books counter increases with each new book.
 
-    print("\n[8] Business methods:")
-    book1.apply_discount(15)
-    print(f"Price after 15% discount: ${book1.price}")
-    book1.is_available = False
-    try:
-        book1.apply_discount(10)
-    except Exception as e:
-        print(e)
-    book1.is_available = True
-    book1.apply_discount(10)
-    print(f"Shipping weight: {book1.get_shipping_weight()} kg")
+### 2. MAGIC METHODS DEMONSTRATION
 
-    print("\n[9] Error handling during object creation:")
-    try:
-        book_bad = Book("", "Author", 100, 100)
-    except ValueError as e:
-        print(e)
-    try:
-        book_bad = Book("Valid Title", "Author", -50, 100)
-    except ValueError as e:
-        print(e)
-    try:
-        book_bad = Book("Valid Title", "Author", 100, -5)
-    except ValueError as e:
-        print(e)
+--- __str__ method (for users) ---
 
-    print("\n" + "=" * 60)
-    print("Demo completed successfully.".center(60))
-    print("=" * 60)
+![alt text](/images/lab01/Screenshot%202026-03-14%20181119.png)
 
-if __name__ == "__main__":
-    run_demo()
-```
+--- __repr__ method (for developers) ---
 
-![alt text](/images/lab01/Screenshot%202026-03-13%20131005.png)
-![alt text](/images/lab01/Screenshot%202026-03-13%20131040.png)
+![alt text](/images/lab01/Screenshot%202026-03-14%20180712.png)
+
+--- __eq__ method (book comparison) ---
+
+![alt](/images/lab01/Screenshot%202026-03-14%20180733.png)
+
+### 3. Accessing properties
+
+![alt](/images/lab01/Screenshot%202026-03-14%20180746.png)
+
+### 4. Modifying price using setter
+
+the new price of book1 is 29.99$
+
+![a](/images/lab01/Screenshot%202026-03-14%20180814.png)
+
+### 5. Class attribute (total_books)
+
+![a](/images/lab01/Screenshot%202026-03-14%20180828.png)
+
+### 6. Object state management
+
+![a](/images/lab01/Screenshot%202026-03-14%20180857.png)
+
+### 7. Business methods
+
+![a](/images/lab01/Screenshot%202026-03-14%20181011.png)
+
+### 8. Error handling during object creation
+
+![a](/images/lab01/Screenshot%202026-03-14%20181025.png)

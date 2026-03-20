@@ -1,37 +1,17 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from validators import validate_title, validate_author, validate_price, validate_pages
 class Book:
     total_books = 0
 
     def __init__(self, title, author, price, pages):
-        self._title = self._validate_title(title)
-        self._author = self._validate_author(author)
-        self._price = self._validate_price(price)
-        self._pages = self._validate_pages(pages)
+        self._title = validate_title(title)
+        self._author = validate_author(author)
+        self._price = validate_price(price)
+        self._pages = validate_pages(pages)
         self._is_available = True
         Book.total_books += 1
-
-    def _validate_title(self, value):
-        if not value or not isinstance(value, str) or value.strip() == "":
-            raise ValueError("Title cannot be empty and must be a string.")
-        return value.strip()
-
-    def _validate_author(self, value):
-        if not value or not isinstance(value, str) or value.strip() == "":
-            raise ValueError("Author name cannot be empty.")
-        return value.strip()
-
-    def _validate_price(self, value):
-        if not isinstance(value, (int, float)):
-            raise TypeError("Price must be a number.")
-        if value <= 0:
-            raise ValueError("Price must be greater than zero.")
-        return float(value)
-
-    def _validate_pages(self, value: int) -> int:
-        if not isinstance(value, int):
-            raise TypeError("Pages must be an integer.")
-        if value <= 0:
-            raise ValueError("Pages must be greater than zero.")
-        return value
 
     @property
     def title(self):
@@ -55,7 +35,7 @@ class Book:
 
     @price.setter
     def price(self, new_price):
-        self._price = self._validate_price(new_price)
+        self._price = validate_price(new_price)
 
     @is_available.setter
     def is_available(self, status: bool):
