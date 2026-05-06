@@ -21,3 +21,25 @@ def validate_pages(value: int) -> int:
     if value <= 0:
         raise ValueError("Pages must be greater than zero.")
     return value
+
+def validate_file_size(value: float) -> float:
+    if not isinstance(value, (int, float)):
+        raise TypeError("File size must be a number.")
+    if value <= 0:
+        raise ValueError("File size must be greater than zero.")
+    return float(value)
+
+def validate_duration(value: float) -> float:
+    if not isinstance(value, (int, float)):
+        raise TypeError("Duration must be a number.")
+    if value <= 0:
+        raise ValueError("Duration must be greater than zero.")
+    return float(value)
+
+def validate_isbn(value: str) -> str:
+    if not value or not isinstance(value, str) or value.strip() == "":
+        raise ValueError("ISBN cannot be empty.")
+    cleaned = value.strip().replace("-", "")
+    if len(cleaned) not in [10, 13]:
+        raise ValueError("ISBN must be 10 or 13 digits long.")
+    return value.strip()
